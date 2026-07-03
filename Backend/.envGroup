@@ -1,0 +1,8 @@
+DEVLOPMENT_PORT='5000'
+BACKEND_ENV='DEVLOPMENT'
+FRONTEND_URL=''
+DATABASE_URL='mongodb+srv://atharvawaste16_db_user:pass123willpass@ekalavyastockapp.4sitx2e.mongodb.net/'
+JWT_REFRESTOCKEN_SECRET='-9E}v5wY!-/cIehX*SWP@FMSx3hMzr@J6*%1UH3I]c&'
+REFRESTOCKEN_DURETION='10D'
+JWT_ACCESSTOCKEN_SECRET='*k[[Ztx;M-1=Z#[;xmGxa3r5HaHqdbvziJ+y#0i%KKa'
+ACCESSTOCKEN_DURETION='10M'
