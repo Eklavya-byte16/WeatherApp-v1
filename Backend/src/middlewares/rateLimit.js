@@ -23,29 +23,26 @@ class RateLimiter {
     const now = Date.now();
     const timestamps = this.attempts[key] || [];
 
-    // Filter to only count attempts within the current time window
+    
     const recentAttempts = timestamps.filter(timestamp => now - timestamp < windowMs);
     
-    // Update the array with only active window timestamps
     this.attempts[key] = recentAttempts;
 
     return recentAttempts.length >= maxAttempts;
   }
 
-  // 2. Added the missing getRetryAfter method your middleware was crying for!
   getRetryAfter(key, maxAttempts, windowMs) {
     const now = Date.now();
     const timestamps = this.attempts[key] || [];
 
     if (timestamps.length === 0) return 0;
 
-    // Find the oldest attempt in the active window
     const oldestAttemptInWindow = timestamps.find(timestamp => now - timestamp < windowMs);
 
     if (!oldestAttemptInWindow) return 0;
 
     const timeUntilExpiry = windowMs - (now - oldestAttemptInWindow);
-    return Math.ceil(timeUntilExpiry / 1000); // Return seconds remaining
+    return Math.ceil(timeUntilExpiry / 1000); 
   }
 
   cleanup() {

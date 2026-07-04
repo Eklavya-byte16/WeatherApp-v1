@@ -16,51 +16,39 @@ createRoot(document.getElementById("root")).render(
         <Route
           path="/"
           element={
-            <CheckAuth protected={true}>
+            <CheckAuth requireAuth={false}>
               <Home />
             </CheckAuth>
           }
         />
-      </Routes>
-
-      <Routes>
         <Route
           path="/login"
           element={
-            <CheckAuth protected={true}>
+            <CheckAuth requireAuth={false}>
               <Login />
             </CheckAuth>
           }
         />
-      </Routes>
-
-      <Routes>
         <Route
           path="/Signup"
           element={
-            <CheckAuth protected={true}>
+            <CheckAuth requireAuth={false}>
               <Signup />
             </CheckAuth>
           }
         />
-      </Routes>
-
-      <Routes>
         <Route
           path="/Dasktop"
           element={
-            <CheckAuth protected={true}>
+            <CheckAuth requireAuth={true}>
               <Dasktop />
             </CheckAuth>
           }
         />
-      </Routes>
-
-      <Routes>
         <Route
           path="/Changeloc"
           element={
-            <CheckAuth protected={true}>
+            <CheckAuth requireAuth={true}>
               <Changeloc />
             </CheckAuth>
           }

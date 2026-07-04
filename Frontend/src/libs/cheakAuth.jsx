@@ -1,30 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Navigate } from "react-router-dom";
+
+function getToken() {
+  const raw = localStorage.getItem("token");
+  if (!raw || raw === "undefined" || raw === "null" || raw.trim() === "") {
+    return null;
+  }
+  return raw;
+}
 
 function CheckAuth({ children, requireAuth = true }) {
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
+  const token = getToken();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  if (requireAuth && !token) {
+    return <Navigate to="/login" replace />;
+  }
 
-    if (requireAuth) {
-      if (!token) {
-        navigate("/login", { replace: true }); 
-      } else {
-        setIsLoading(false);
-      }
-    } else {
-      if (token) {
-        navigate("/desktop", { replace: true }); 
-      } else {
-        setIsLoading(false);
-      }
-    }
-  }, [navigate, requireAuth]);
-
-  if (isLoading) {
-    return <h1>Loading...</h1>; 
+  if (!requireAuth && token) {
+    return <Navigate to="/Dasktop" replace />;
   }
 
   return <>{children}</>;
