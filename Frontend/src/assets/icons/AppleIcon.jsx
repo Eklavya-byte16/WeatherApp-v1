@@ -1,10 +1,6 @@
 import React from "react";
 
-export function AppleIcon({
-  size = 20,
-  color = "currentColor",
-  className = "",
-}) {
+function AppleIcon({ size = 20, color = "currentColor", className = "" }) {
   return (
     <svg
       viewBox="45.5 7279 18 21"
@@ -22,3 +18,4 @@ export function AppleIcon({
     </svg>
   );
 }
+export default AppleIcon;

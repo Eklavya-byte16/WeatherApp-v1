@@ -1,10 +1,6 @@
 import React from "react";
 
-export function GoogleIcon({
-  size = 20,
-  color = "currentColor",
-  className = "",
-}) {
+function GoogleIcon({ size = 20, color = "currentColor", className = "" }) {
   return (
     <svg
       viewBox="243.5 7237.5 21 21"
@@ -22,3 +18,4 @@ export function GoogleIcon({
     </svg>
   );
 }
+export default GoogleIcon;

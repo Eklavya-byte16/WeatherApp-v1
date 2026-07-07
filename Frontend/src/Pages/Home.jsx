@@ -11,7 +11,7 @@ import CTA from "../components/CTA";
 import Footer from "../components/Footer";
 
 import useScrollProgress from "../hooks/useScrollProgress";
-console.log("Home rendered");
+
 function Home() {
   const progress = useScrollProgress();
 

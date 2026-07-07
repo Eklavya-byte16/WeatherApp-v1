@@ -1,10 +1,6 @@
 import React from "react";
 
-export function GithubIcon({
-  size = 24,
-  color = "currentColor",
-  className = "",
-}) {
+function GithubIcon({ size = 24, color = "currentColor", className = "" }) {
   return (
     <svg
       viewBox="84 7399 20 20"
@@ -22,3 +18,5 @@ export function GithubIcon({
     </svg>
   );
 }
+
+export default GithubIcon;
