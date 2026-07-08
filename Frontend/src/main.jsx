@@ -7,10 +7,12 @@ import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Dasktop from "./Pages/Dasktop";
 import Changeloc from "./Pages/Changeloc";
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <BrowserRouter>
       <Routes>
         <Route
@@ -30,7 +32,7 @@ createRoot(document.getElementById("root")).render(
           }
         />
         <Route
-          path="/Signup"
+          path="/signup"
           element={
             <CheckAuth requireAuth={false}>
               <Signup />
@@ -38,7 +40,7 @@ createRoot(document.getElementById("root")).render(
           }
         />
         <Route
-          path="/Dasktop"
+          path="/dashboard"
           element={
             <CheckAuth requireAuth={true}>
               <Dasktop />
@@ -55,5 +57,6 @@ createRoot(document.getElementById("root")).render(
         />
       </Routes>
     </BrowserRouter>
+    </GoogleOAuthProvider>
   </StrictMode>
 );

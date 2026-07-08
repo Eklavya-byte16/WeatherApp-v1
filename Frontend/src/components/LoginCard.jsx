@@ -1,47 +1,103 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
 import { Cloud, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import GoogleIcon from "../assets/icons/GoogleIcon";
 import GithubIcon from "../assets/icons/GithubIcon";
 import AppleIcon from "../assets/icons/AppleIcon";
 
-// Replace this with your actual authentication function
-async function authenticate({ email, password }) {
-  await new Promise((resolve) => setTimeout(resolve, 900));
-
-  if (!email || !password) {
-    throw new Error("Enter your email and password.");
-  }
-
-  return { ok: true };
-}
+const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
 function LoginCard() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleGoogleSignup = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
       setError("");
       setLoading(true);
-
       try {
-        await authenticate({ email, password });
+        const res = await fetch(`${API_BASE}/auth/google`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ access_token: tokenResponse.access_token }),
+        });
 
-        // Replace with React Router navigate() later
-        window.location.href = "/dashboard";
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error?.message || "Google sign-in failed.");
+        }
+
+        const data = await res.json();
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/dashboard");
       } catch (err) {
         setError(err.message || "Something went wrong. Try again.");
       } finally {
         setLoading(false);
       }
     },
-    [email, password],
-  );
+    onError: () => setError("Google sign-in failed."),
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    // *************************************** Auth Starts *************************************************************
+
+    const { email, password } = formData;
+
+    if (!email || !password) {
+      setError("Enter your email and password.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password needs at least 8 characters.");
+      return;
+    }
+    if (password.length > 64) {
+      setError("Password is too long.");
+      return;
+    }
+    // *************************************** Auth ends *************************************************************
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error?.message || "Invalid email or password.");
+      }
+
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message || "Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="wsl-card-wrap">
@@ -50,9 +106,7 @@ function LoginCard() {
           <span className="wsl-logo-icon wsl-logo-icon-lg">
             <Cloud size={24} />
           </span>
-
           <h1>WeatherSphere</h1>
-
           <p>
             Welcome back.
             <br />
@@ -65,13 +119,13 @@ function LoginCard() {
             <span className="wsl-field-icon">
               <Mail size={17} />
             </span>
-
             <input
               type="email"
+              name="email"
               placeholder="Enter your email"
               autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               required
             />
           </label>
@@ -80,16 +134,15 @@ function LoginCard() {
             <span className="wsl-field-icon">
               <Lock size={17} />
             </span>
-
             <input
               type={showPassword ? "text" : "password"}
+              name="password"
               placeholder="Enter your password"
               autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               required
             />
-
             <button
               type="button"
               className="wsl-field-toggle"
@@ -112,7 +165,6 @@ function LoginCard() {
               <span className="wsl-checkbox-box" />
               Remember me
             </label>
-
             <a href="/forgot-password" className="wsl-forgot">
               Forgot password?
             </a>
@@ -132,27 +184,10 @@ function LoginCard() {
             type="button"
             className="wsl-social-btn"
             aria-label="Continue with Google"
+            onClick={() => handleGoogleSignup()}
           >
             <GoogleIcon size={18} />
             Google
-          </button>
-
-          <button
-            type="button"
-            className="wsl-social-btn"
-            aria-label="Continue with GitHub"
-          >
-            <GithubIcon size={18} />
-            GitHub
-          </button>
-
-          <button
-            type="button"
-            className="wsl-social-btn"
-            aria-label="Continue with Apple"
-          >
-            <AppleIcon size={18} />
-            Apple
           </button>
         </div>
 

@@ -21,6 +21,8 @@ import {
 } from '../middlewares/rateLimit.js';
 
 import {asyncHandler} from '../middlewares/errorHandler.js';
+import { googleAuth } from '../controllers/authController.controller.js';
+
 
 const router = express.Router();
 
@@ -50,10 +52,18 @@ router.get(
     authenticate,
     asyncHandler(getCurrentUser)
 );
+
+router.post(
+    '/google',
+    loginRateLimit,
+    asyncHandler(googleAuth)
+);
+
 router.post(
     '/logout-all',
     authenticate,
     asyncHandler(logoutAllDivices)
 );
+
 
 export default router

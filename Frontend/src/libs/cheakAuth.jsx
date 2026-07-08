@@ -1,23 +1,27 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-function getToken() {
-  const raw = localStorage.getItem("token");
+function getUser() {
+  const raw = localStorage.getItem("user");
   if (!raw || raw === "undefined" || raw === "null" || raw.trim() === "") {
     return null;
   }
-  return raw;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }
 
 function CheckAuth({ children, requireAuth = true }) {
-  const token = getToken();
+  const user = getUser();
 
-  if (requireAuth && !token) {
+  if (requireAuth && !user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!requireAuth && token) {
-    return <Navigate to="/Dasktop" replace />;
+  if (!requireAuth && user) {
+    return <Navigate to="/dashboard" replace />; 
   }
 
   return <>{children}</>;

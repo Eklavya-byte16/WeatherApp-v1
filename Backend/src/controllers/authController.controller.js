@@ -366,6 +366,72 @@ export const logoutAllDivices = async (req, res, next) => {
   }
 };
 
+export const googleAuth = async (req, res, next) => {
+  try {
+    const { access_token } = req.body;
+    if (!access_token) {
+      throw new ValidationError("access_token is required", "access_token");
+    }
+
+    const googleRes = await fetch(
+      `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
+    );
+
+    if (!googleRes.ok) {
+      throw new AuthenticationError("Invalid or expired Google token");
+    }
+
+    const googlePayload = await googleRes.json();
+    const { sub: googleId, email, name, picture, email_verified } = googlePayload;
+
+    if (!email || !email_verified) {
+      throw new AuthenticationError("Google account email not verified");
+    }
+
+    let user = await User.findOne({ $or: [{ googleId }, { email: email.toLowerCase() }] });
+
+    if (!user) {
+      user = new User({
+        email: email.toLowerCase(),
+        username: name?.replace(/\s+/g, "").toLowerCase() || `user_${googleId.slice(0, 8)}`,
+        googleId,
+        authProvider: "google",
+        emailVerified: true,
+        isActive: true,
+        photo: { url: picture || null },
+      });
+      await user.save();
+    } else if (!user.googleId) {
+      user.googleId = googleId;
+      await user.save();
+    }
+
+    const accessToken = signAccessTocken(user._id.toString(), user.email);
+    const refreshtoken = signRefrashToken(user._id.toString(), user.tokenVersion || 0);
+    const refreshExpiryMs = getTokenExpiryMs("7d");
+
+    await new Token({
+      userId: user._id,
+      refreshToken: refreshtoken,
+      tokenVersion: user.tokenVersion || 0,
+      expiresAt: new Date(Date.now() + refreshExpiryMs),
+      userAgent: req.get("User-Agent"),
+      ipAddress: req.ip,
+    }).save();
+
+    setTokenCookie(res, "accessToken", accessToken, getTokenExpiryMs("15m"));
+    setTokenCookie(res, "refreshToken", refreshtoken, refreshExpiryMs);
+
+    res.status(200).json({
+      success: true,
+      user: { userId: user._id, email: user.email, username: user.username },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 export default {
   signup,
   login,
@@ -373,4 +439,5 @@ export default {
   logOut,
   getCurrentUser,
   logoutAllDivices,
+  googleAuth
 };

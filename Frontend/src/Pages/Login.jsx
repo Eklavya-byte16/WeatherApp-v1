@@ -20,11 +20,6 @@ import "./Login.css";
 import LoginNavbar from "../components/LoginNavbar";
 import LoginCard from "../components/LoginCard";
 
-async function authenticate({ email, password }) {
-  await new Promise((r) => setTimeout(r, 900));
-  if (!email || !password) throw new Error("Enter your email and password.");
-  return { ok: true };
-}
 
 /* ================================ BACKGROUND SCENE ================================ */
 function BackgroundScene() {
@@ -98,6 +93,7 @@ function BackgroundScene() {
 }
 
 export default function LoginPage() {
+
   return (
     <div className="wsl-root">
       <BackgroundScene />
