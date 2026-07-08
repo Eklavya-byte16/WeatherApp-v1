@@ -325,8 +325,14 @@ body {
   justify-content: space-between;
   padding: 12px 20px;
   border-radius: 999px;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.15);
+
+  /* Crucial for the frosted look */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  /* Add a distinct white border to define the glass edges */
+  border: 1px solid rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(18px);
 }
 .ws-logo {
@@ -539,9 +545,7 @@ body {
     rgba(136, 216, 255, 0.6),
     rgba(94, 169, 255, 0)
   );
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   opacity: 0;
