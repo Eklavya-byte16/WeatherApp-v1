@@ -518,15 +518,20 @@
 
 .wsl-social-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: 10px;
-  justify-items: center;
+
+  justify-items: stretch;
   align-items: center;
 }
+
 .wsl-social-btn {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 100%;
   gap: 8px;
   padding: 12px 8px;
   border-radius: 16px;
