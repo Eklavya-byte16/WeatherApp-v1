@@ -1,9 +1,23 @@
-import React from 'react'
+import "./signup.css";
 
-function Signup() {
+import SignupBackgroundScene from "../components/SignupBackgroundScene";
+import LoginNavbar from "../components/LoginNavbar";
+import SignupCard from "../components/SignupCard";
+
+export default function SignupPage() {
   return (
-    <div>Signup</div>
-  )
-}
+    <div className="wss-root">
+      <SignupBackgroundScene />
 
-export default Signup
+      <div className="wss-content">
+        <LoginNavbar />
+
+        <main className="wss-split">
+          <div className="wss-card-wrap">
+            <SignupCard />
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
